@@ -95,8 +95,8 @@ def get_file_list(seq_file_path, fwd_suf, rev_suf):
                 logging.warning("No read direction suffixes found in " + filename)
         else:
             continue
-        # Check that each entry has two values or throw warning
     
+    # Check that each entry has two values or throw warning
     not_enough_files = []
     for sample in fastqfiles:
         #print(fastqfiles[sample])
@@ -126,13 +126,13 @@ def make_json_output(file_dict, proj_name, outdir, shortreads):
     return json_out_dict
 
 
-def write_json_output(json_dict, outdir):
+def write_json_output(json_dict, joutdir):
     # make directory if it doesn't exist
-    print(os.path.dirname(outdir))
-    os.makedirs(outdir, exist_ok=True)
+    print(os.path.dirname(joutdir))
+    os.makedirs(joutdir, exist_ok=True)
 
     for prefix in json_dict:
-        file_out_name = os.path.join(outdir, prefix + "_input")
+        file_out_name = os.path.join(joutdir, prefix + "_input")
         with open(f'{file_out_name}.json', "w") as fp:
             json.dump(json_dict[prefix], fp, indent=3)
 
