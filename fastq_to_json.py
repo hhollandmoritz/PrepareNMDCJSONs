@@ -83,14 +83,14 @@ def get_file_list(seq_file_path, fwd_suf, rev_suf):
             prefix = re.sub(".fastq.gz|.fastq", "", filename) 
             prefix = re.sub(pattern, "", prefix)
             #print(prefix)
-            fastqfiles.setdefault(prefix, [])
+            fastqfiles.setdefault(prefix, [None, None])
             # we have to process these in reverse-first order so they'll be in the correct order in the json 
             if rev_suf in filename:
                 #print("Reverse found!")
-                fastqfiles[prefix].append(os.path.join(seq_file_path, filename))
+                fastqfiles[prefix][1] = os.path.join(seq_file_path, filename)
             elif fwd_suf in filename:
                 #print("Foreward found!")
-                fastqfiles[prefix].append(os.path.join(seq_file_path, filename))
+                fastqfiles[prefix][0] = os.path.join(seq_file_path, filename)
             else:
                 logging.warning("No read direction suffixes found in " + filename)
         else:
@@ -100,7 +100,7 @@ def get_file_list(seq_file_path, fwd_suf, rev_suf):
     not_enough_files = []
     for sample in fastqfiles:
         #print(fastqfiles[sample])
-        if len(fastqfiles[sample]) < 2:
+        if (len(fastqfiles[sample]) - fastqfiles[sample].count(None)) < 2:
             logging.warning(sample + " does not have 2 fastq files, removing from dictionary. " +
                           "No json will be generated.")
             not_enough_files.append(sample)
