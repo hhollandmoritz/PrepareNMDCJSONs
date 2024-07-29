@@ -120,7 +120,7 @@ def make_json_output(file_dict, proj_name, outdir, shortreads):
         json_out_dict[prefix] = {}
         json_out_dict[prefix]['rqcfilter.input_files'] = file_dict[prefix]
         json_out_dict[prefix]['rqcfilter.proj'] = proj_name + "_" + prefix
-        json_out_dict[prefix]['rqcfilter.outdir'] = os.getcwd() + "/" + outdir
+        json_out_dict[prefix]['rqcfilter.outdir'] = outdir
         json_out_dict[prefix]['rqcfilter.shortRead'] = shortreads
 
     return json_out_dict
