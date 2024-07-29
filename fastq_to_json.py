@@ -79,11 +79,12 @@ def get_file_list(seq_file_path, fwd_suf, rev_suf):
             prefix = re.sub(pattern, "", prefix)
             #print(prefix)
             fastqfiles.setdefault(prefix, [])
-            if fwd_suf in filename:
-                print("forward found!")
-                fastqfiles[prefix].append(os.path.join(seq_file_path, filename))
-            elif rev_suf in filename:
+            # we have to process these in reverse-first order so they'll be in the correct order in the json 
+            if rev_suf in filename:
                 print("Reverse found!")
+                fastqfiles[prefix].append(os.path.join(seq_file_path, filename))
+            elif fwd_suf in filename:
+                print("Foreward found!")
                 fastqfiles[prefix].append(os.path.join(seq_file_path, filename))
             else:
                 warnings.warn("No read direction suffixes found in " + filename)
