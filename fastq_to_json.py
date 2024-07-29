@@ -27,14 +27,17 @@ parser.add_argument('-r', '--reverse_reads_suffix', required=False, \
                     help='The suffix indicating reverse sequence reads in fastq names', \
                     default="R2_"),
 parser.add_argument('-p', '--project_name', required=False, \
-                    help='The name of the nmdc project to use', \
+                    help='The name of the nmdc project to use, this will become the prefix of all fastq outputs', \
                     default="MyProject"),
 parser.add_argument('-s', '--short_reads', required=False, \
                     help='Whether or not the shortreads method will be used', \
                     default="True"),
 parser.add_argument('-o', '--output_dir', required=False, \
+                    help='The output directory for sequence reads to be stored',
+                    default= "output")
+parser.add_argument('-jo', '--json_output_dir', required=False, \
                     help='The output directory where json files will be stored',
-                    default= "/home/hannah/Downloads/jsonout")
+                    default= "jsonout")
 
 
 def main():
@@ -46,6 +49,7 @@ def main():
     proj_name = args.project_name
     shortreads = args.short_reads
     output_dir = args.output_dir
+    joutput_dir = args.json_output_dir
 
 #    sys.stdout.write('Start time: ' + time + '\n')
     
@@ -53,10 +57,12 @@ def main():
     filelist = get_file_list(sequence_reads_fp, foreward_suff, reverse_suff)
     #print(filelist)
     # next create dictionary of json output
-    json_out = make_json_output(filelist, proj_name, shortreads)
+    json_out = make_json_output(filelist, proj_name, output_dir, shortreads)
     print(json_out)
     # write json files
-    write_json_output(json_out, output_dir)
+    write_json_output(json_out, joutput_dir)
+    # Make directory to hold processing output
+    os.makedirs(output_dir, exist_ok=True)
 
     
 
@@ -98,7 +104,7 @@ def get_file_list(seq_file_path, fwd_suf, rev_suf):
 
     return fastqfiles
 
-def make_json_output(file_dict, proj_name, shortreads):
+def make_json_output(file_dict, proj_name, outdir, shortreads):
     # takes a dictionary of sequence files
 
     json_out_dict = {}
@@ -106,7 +112,8 @@ def make_json_output(file_dict, proj_name, shortreads):
     for prefix in file_dict:
         json_out_dict[prefix] = {}
         json_out_dict[prefix]['rqcfilter.input_files'] = file_dict[prefix]
-        json_out_dict[prefix]['rqcfilter.proj'] = proj_name
+        json_out_dict[prefix]['rqcfilter.proj'] = proj_name + "_" + prefix
+        json_out_dict[prefix]['rqcfilter.outdir'] = outdir
         json_out_dict[prefix]['rqcfilter.shortRead'] = shortreads
 
     return json_out_dict
